@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Sum
 
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated, SAFE_METHODS, AllowAny, IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -10,7 +10,7 @@ from .filters import RecipeFilter
 from .services import create_shopping_list
 from .paginator import LimitPageNumberPagination
 from .serializers import *
-from rest_framework import viewsets, status, filters
+from rest_framework import viewsets, status
 from recipes.models import *
 from rest_framework.decorators import action
 from djoser.views import UserViewSet
