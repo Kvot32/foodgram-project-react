@@ -9,7 +9,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .filters import RecipeFilter
 from .services import create_shopping_list
 from .paginator import LimitPageNumberPagination
-from .serializers import TagSerializer, IngredientSerializer,FavoriteSerializer, RecipeIngredientGetSerializer, FollowSerializer, CustomUserSerializer, RecipesGetSerializer, RecipeCreatedSerializer
+from .serializers import TagSerializer, IngredientSerializer, FavoriteSerializer, RecipeIngredientGetSerializer, \
+    FollowSerializer, CustomUserSerializer, RecipesGetSerializer, RecipeCreatedSerializer
 from rest_framework import viewsets, status
 from recipes.models import Tag, Recipe, AmountIngredient, Ingredient, Favorite, ShoppingList
 from users.models import Follow
@@ -17,22 +18,22 @@ from rest_framework.decorators import action
 from djoser.views import UserViewSet
 from .permissions import AdminUserOrReadOnly
 
-User = get_user_model ()
+User = get_user_model()
 
 
-class TagViewSet (viewsets.ModelViewSet):
+class TagViewSet(viewsets.ModelViewSet):
     permission_classes = (AdminUserOrReadOnly,)
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
 
-class IngredientViewSet (viewsets.ModelViewSet):
-    queryset = Ingredient.objects.all ()
+class IngredientViewSet(viewsets.ModelViewSet):
+    queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
 
 
-class AmountIngredientViewSet (viewsets.ModelViewSet):
-    queryset = AmountIngredient.objects.all ()
+class AmountIngredientViewSet(viewsets.ModelViewSet):
+    queryset = AmountIngredient.objects.all()
     serializer_class = RecipeIngredientGetSerializer
 
 
@@ -44,15 +45,15 @@ class CustomUserViewSet(UserViewSet):
     search_fields = ('username',)
     serializers_class = CustomUserSerializer
 
-    @action (detail=False, permission_classes=[IsAuthenticated])
-    def subscriptions (self, request):
-        user = Follow.objects.filter (user=self.request.user)
-        pages = self.paginate_queryset (user)
-        serializer = FollowSerializer (pages, many=True, context={'request': request})
+    @action(detail=False, permission_classes=[IsAuthenticated])
+    def subscriptions(self, request):
+        user = Follow.objects.filter(user=self.request.user)
+        pages = self.paginate_queryset(user)
+        serializer = FollowSerializer(pages, many=True, context={'request': request})
         return Response(serializer.data)
 
-    @action (detail=True, methods=['post', 'delete'],permission_classes=[IsAuthenticated])
-    def subscribe (self, request, pk=None):
+    @action(detail=True, methods=['post', 'delete'], permission_classes=[IsAuthenticated])
+    def subscribe(self, request, pk=None):
         user = request.user
         author = get_object_or_404(User, pk=pk)
         if request.method == 'POST':
@@ -106,7 +107,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
         permission_classes=(IsAuthenticated,),
         pagination_class=LimitPageNumberPagination
     )
-
     def favorite(self, request, pk=None):
         user = request.user
         recipe = get_object_or_404(Recipe, pk=pk)
@@ -178,21 +178,3 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'ingredients__measurement_unit').order_by(
             'ingredients__name').annotate(total=Sum('amount'))
         return create_shopping_list(ingredients)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

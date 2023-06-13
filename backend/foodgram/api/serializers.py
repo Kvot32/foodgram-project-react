@@ -129,7 +129,6 @@ class FollowSerializer(serializers.ModelSerializer):
             'recipes_count'
         )
 
-
     def get_is_subscribed(self, obj):
         return Follow.objects.filter(user=obj.user, author=obj.author).exists()
 
@@ -156,7 +155,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 class RecipesGetSerializer(serializers.ModelSerializer):
     """Сериализатор для GET метода"""
     tags = TagSerializer(many=True)
-    author= CustomUserSerializer()
+    author = CustomUserSerializer()
     ingredients = RecipeIngredientGetSerializer(many=True, source='ingredientrecipes')
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
@@ -183,9 +182,8 @@ class RecipesGetSerializer(serializers.ModelSerializer):
             return False
         return Follow.objects.filter(
             user=self.context['request'].user,
-            author = obj.author
+            author=obj.author
         ).exists()
-
 
     def get_is_in_shopping_cart(self, obj):
         user = self.context['request'].user
@@ -193,7 +191,7 @@ class RecipesGetSerializer(serializers.ModelSerializer):
             return False
         return ShoppingList.objects.filter(
             user=self.context['request'].user,
-            recipe = obj
+            recipe=obj
         ).exists()
 
 
@@ -225,9 +223,8 @@ class RecipeCreatedSerializer(serializers.ModelSerializer):
             return False
         return Follow.objects.filter(
             user=user
-            , author = obj.author
+            , author=obj.author
         ).exists()
-
 
     def get_is_in_shopping_cart(self, obj):
         user = self.context['request'].user
@@ -235,7 +232,7 @@ class RecipeCreatedSerializer(serializers.ModelSerializer):
             return False
         return ShoppingList.objects.filter(
             user=user,
-            recipe = obj.recipe
+            recipe=obj.recipe
         ).exists()
 
     def create_ingredients(self, recipe, ingredients):
@@ -270,7 +267,3 @@ class RecipeCreatedSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         return RecipesGetSerializer(instance).data
-
-
-
-
