@@ -65,9 +65,9 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             cd infra
-            sudo docker-compose stop
+            sudo docker compose stop
             sudo docker system prune -af
-            sudo docker-compose rm backend
+            sudo docker compose rm backend
             sudo docker rm ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
             sudo docker rm ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
             sudo rm -f .env
@@ -81,10 +81,10 @@ jobs:
             echo SECKET_KEY=${{ secrets.SECKET_KEY }} >> .env
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_frontend:latest
-            sudo docker-compose up -d --build
-            sudo docker-compose exec -T backend python manage.py makemigrations
-            sudo docker-compose exec -T backend python manage.py migrate
-            sudo docker-compose exec -T backend python manage.py collectstatic --no-input
+            sudo docker compose up -d --build
+            sudo docker compose exec -T backend python manage.py makemigrations
+            sudo docker compose exec -T backend python manage.py migrate
+            sudo docker compose exec -T backend python manage.py collectstatic --no-input
 
   send_message:
     name: Send message to Telegram
