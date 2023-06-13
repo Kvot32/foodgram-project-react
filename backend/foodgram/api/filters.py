@@ -1,5 +1,4 @@
 import django_filters as filters
-
 from recipes.models import Ingredient, Recipe
 
 
@@ -27,7 +26,7 @@ class RecipeFilter(filters.FilterSet):
             'is_in_shopping_cart',
         )
 
-    def get_favorite(self, queryset,  value):
+    def get_favorite(self, queryset, value):
         if value:
             queryset = queryset.filter(in_favorite__user=self.request.user)
         return queryset
