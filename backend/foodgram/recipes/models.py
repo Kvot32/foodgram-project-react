@@ -6,7 +6,7 @@ from users.models import CustomUser
 
 
 class Tag (models.Model):
-    name = models.CharField (max_length=200, verbose_name='Название', unique=True)
+    name = models.CharField (max_length=80, verbose_name='Название', unique=True)
     color = models.CharField (max_length=7, unique=True,
                               validators=[RegexValidator (regex='^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
                                                           message='Ваше значение не является цветом'

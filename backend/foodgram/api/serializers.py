@@ -1,5 +1,5 @@
-from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
+from django.db import transaction
 from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 
@@ -9,7 +9,7 @@ import base64
 
 
 class TagSerializer(serializers.ModelSerializer):
-    '''Сериализатор для тегов'''
+    """Сериализатор для тего"""
 
     class Meta:
         model = Tag
@@ -68,7 +68,7 @@ class RecipeIngredientPostSerializer(serializers.ModelSerializer):
 
 
 class Base64ImageField(serializers.ImageField):
-    """Сериализатор для картинки(из теории)"""
+    """Сериализатор для картинки (из теории)"""
 
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:image'):
@@ -89,7 +89,7 @@ class RecipeShortSerializer(serializers.ModelSerializer):
             'cooking_time'
         )
         model = Recipe
-        ordering = ['-id']
+        ordering = ('-id',)
 
 
 class FavoriteRecipeSerializer(serializers.ModelSerializer):
@@ -106,6 +106,7 @@ class FavoriteRecipeSerializer(serializers.ModelSerializer):
 
 
 class FollowSerializer(serializers.ModelSerializer):
+    """Сериализатор для подписок"""
     id = serializers.ReadOnlyField(source='author.id')
     email = serializers.ReadOnlyField(source='author.email')
     username = serializers.ReadOnlyField(source='author.username')
@@ -153,6 +154,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
 
 class RecipesGetSerializer(serializers.ModelSerializer):
+    """Сериализатор для GET метода"""
     tags = TagSerializer(many=True)
     author= CustomUserSerializer()
     ingredients = RecipeIngredientGetSerializer(many=True, source='ingredientrecipes')
@@ -196,6 +198,7 @@ class RecipesGetSerializer(serializers.ModelSerializer):
 
 
 class RecipeCreatedSerializer(serializers.ModelSerializer):
+    """Сериализатор для POST, PATCH"""
     ingredients = RecipeIngredientPostSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(many=True, queryset=Tag.objects.all())
     image = Base64ImageField()
@@ -235,38 +238,34 @@ class RecipeCreatedSerializer(serializers.ModelSerializer):
             recipe = obj.recipe
         ).exists()
 
+    def create_ingredients(self, recipe, ingredients):
+        for ingredient in ingredients:
+            ingredient_id = ingredient.get('ingredient').id
+            amount = ingredient.get('amount')
+            AmountIngredient.objects.create(
+                recipe=recipe,
+                ingredient_id=ingredient_id,
+                amount=amount
+            )
+
+    @transaction.atomic
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
-        for ingredient in ingredients:
-            AmountIngredient.objects.create(
-                recipe=recipe,
-                ingredients=ingredient.get('ingredient'),
-                amount=ingredient.get('amount')
-            )
+        self.create_ingredients(recipe, ingredients)
         return recipe
 
+    @transaction.atomic
     def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.text = validated_data.get('text', instance.text)
-        instance.cooking_time = validated_data.get('cooking_time', instance.cooking_time)
-        instance.image = validated_data.get('image', instance.image)
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         instance = super().update(instance, validated_data)
         instance.ingredients.clear()
         instance.tags.clear()
         instance.tags.set(tags)
-        for ingredient in ingredients:
-            ingredient_id = ingredient.get('ingredient').id
-            amount = ingredient.get('amount')
-            AmountIngredient.objects.create(
-                recipe=instance,
-                ingredient_id=ingredient_id,
-                amount=amount
-            )
+        self.create_ingredients(instance, ingredients)
         return instance
 
     def to_representation(self, instance):

@@ -2,19 +2,20 @@ from django.contrib.auth import get_user_model
 from django.db.models import Sum
 
 from rest_framework.generics import get_object_or_404
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, SAFE_METHODS
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
 from .filters import RecipeFilter
 from .services import create_shopping_list
 from .paginator import LimitPageNumberPagination
-from .serializers import *
+from .serializers import TagSerializer, IngredientSerializer,FavoriteSerializer, RecipeIngredientGetSerializer, FollowSerializer, CustomUserSerializer, RecipesGetSerializer, RecipeCreatedSerializer
 from rest_framework import viewsets, status
-from recipes.models import *
+from recipes.models import Tag, Recipe, AmountIngredient, Ingredient, Favorite, ShoppingList
+from users.models import Follow
 from rest_framework.decorators import action
 from djoser.views import UserViewSet
-from .permissions import *
+from .permissions import AdminUserOrReadOnly
 
 User = get_user_model ()
 
@@ -40,7 +41,7 @@ class CustomUserViewSet(UserViewSet):
     pagination_class = LimitPageNumberPagination
     permission_classes = (AllowAny,)
     filter_backends = (DjangoFilterBackend,)
-    search_fields = ('username')
+    search_fields = ('username',)
     serializers_class = CustomUserSerializer
 
     @action (detail=False, permission_classes=[IsAuthenticated])
@@ -48,9 +49,7 @@ class CustomUserViewSet(UserViewSet):
         user = Follow.objects.filter (user=self.request.user)
         pages = self.paginate_queryset (user)
         serializer = FollowSerializer (pages, many=True, context={'request': request})
-        print(serializer.data)
         return Response(serializer.data)
-
 
     @action (detail=True, methods=['post', 'delete'],permission_classes=[IsAuthenticated])
     def subscribe (self, request, pk=None):
@@ -140,7 +139,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         pagination_class=LimitPageNumberPagination
     )
     def shopping_cart(self, request, pk=None):
-        user = get_object_or_404(User, pk=request.user.pk)
+        user = request.user
         recipe = get_object_or_404(Recipe, pk=pk)
         in_shopping = ShoppingList.objects.filter(
             user=user, recipe=recipe)
