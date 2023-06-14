@@ -1,45 +1,33 @@
-# Продуктовый помощник - Foodgram
+# Foodrgam
 
-#### *Дипломная работа*
+ Продуктовый помощник - дипломный проект курса на Яндекс.Практикум.
 
-## Технологии:
-- Python 3.9
-- Django 3.2
-- Django REST framework 3.13
-- Nginx
+## О проекте 
+
+- Проект упакован в Docker-контейнерах;
+- Проект был развернут на сервере: <http://51.250.9.96>
+  
+## Стек технологий
+- Python
+- Django
+- Django REST Framework
+- PostgreSQL
 - Docker
-- Postgres
 
-### http://158.160.15.136/
+## Зависимости
+- Перечислены в файле backend/requirements.txt
 
-### Поехали:
-- Скачиваем проект
-```
-git clone https://github.com/kvot32/foodgram-project-react.git
-```
-- Подключаемся к серверу
-```
-ssh <server user>@<public server IP>
-```
-- Устанавливаем докер
-```
-sudo apt install docker.io
-```
-- Устанавливаем Docker-Compose (для Linux)
-```
-sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-```
-- Получаем права для docker-compose
-```
-sudo chmod +x /usr/local/bin/docker-compose
-```
-- Скидываем файлы docker-compose.yaml и nginx.conf на сервер, сделать это можно командой (в случае удаленного запуска)
-```
-scp docker-compose.yaml <username>@<public ip adress>:/home/<username>/docker-compose.yaml
-```
-- Настройка переменных окружения:
 
- В корневой папке проекта необходимо создать файл .env и и заполните его данными из файла .env.example
-```
+## Для запуска на собственном сервере
 
-Для загрузки своих ингредиентов, вам нужно в папке data заменить файл ingredients.json, наполненный вашими ингредиентами. Они заполняются после выполнения миграции.
+1. Установите на сервере `docker` и `docker compose`
+2. Создайте файл `/infra/.env` Шаблон для заполнения файла нахоится в `/infra/.env.example`
+3. Из директории `/infra/` выполните команду `docker-compose up -d --build`
+5. Выполните миграции `docker compose exec -it app python manage.py migrate`
+6. Создайте Администратора `docker compose exec -it app python manage.py createsuperuser`
+7. Соберите статику `docker compose exec app python manage.py collectstatic --no-input`
+8. Из директории `/backend/` Загрузите фикстуры в Базу 
+
+    `sudo docker exec -it app python manage.py load_data fixtures.json`
+
+
