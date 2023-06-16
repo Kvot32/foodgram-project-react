@@ -34,7 +34,9 @@ ALLOWED_HOSTS = [
     'backend',
     'localhost',
     '51.250.9.96',
-    'db']
+    'db',
+    'proxy',
+    'fronted']
 
 AUTH_USER_MODEL = 'users.CustomUser'
 
