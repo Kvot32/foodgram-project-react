@@ -33,7 +33,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'backend',
     'localhost',
-    '158.160.15.136',
+    '51.250.9.96',
     'db']
 
 AUTH_USER_MODEL = 'users.CustomUser'
