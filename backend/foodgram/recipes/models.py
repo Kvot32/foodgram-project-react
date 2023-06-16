@@ -44,7 +44,6 @@ class Ingredient (models.Model):
         constraints = [
             models.UniqueConstraint (
                 fields=('name', 'measurement_unit'),
-                name='ingredient_name_unit_unique'
             )
         ]
     def __str__ (self):
