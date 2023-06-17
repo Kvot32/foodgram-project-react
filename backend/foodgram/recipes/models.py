@@ -41,11 +41,6 @@ class Ingredient (models.Model):
         ordering = ("name",)
         verbose_name = "Ингридиент"
         verbose_name_plural = "Ингидиенты"
-        constraints = [
-            models.UniqueConstraint (
-                fields=('name', 'measurement_unit'),
-            )
-        ]
     def __str__ (self):
         return f'{self.name}, {self.measurement_unit}'
 class Recipe (models.Model):
@@ -53,7 +48,7 @@ class Recipe (models.Model):
     author = models.ForeignKey (
         CustomUser, related_name='recipes', on_delete=models.CASCADE, verbose_name='автор'
     )
-    image = models.ImageField (upload_to='image/', null=True, blank=True, verbose_name='Фото рецепта')
+    image = models.ImageField (upload_to='image/', verbose_name='Фото рецепта')
     ingredients = models.ManyToManyField (Ingredient, through=AmountIngredient,
                                          verbose_name='Количество ингридиентов', )
     text = models.TextField (verbose_name='Текст')
