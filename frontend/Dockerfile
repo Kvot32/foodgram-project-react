@@ -9,6 +9,6 @@ CMD cp -r build result_build
 
 FROM nginx:1.19.3
 COPY --from=build /app/result_build /usr/share/nginx/html
-COPY ../infra/nginx.conf /etc/nginx/conf.d/default.conf
+COPY ./infra/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

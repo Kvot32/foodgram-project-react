@@ -29,8 +29,8 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - ../frontend/build:/usr/share/nginx/html/
+      - ./configs/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ../frontend/result_build:/usr/share/nginx/html/
       - static_value:/var/html/back_static/
       - media_value:/var/html/back_media/
     depends_on:
