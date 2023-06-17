@@ -5,7 +5,7 @@ COPY package*.json ./
 RUN npm install
 COPY . ./
 RUN npm run build
-CMD cp -r build result_build
+RUN cp -r build /app/result_build
 
 FROM nginx:1.19.3
 COPY --from=build /app/result_build /usr/share/nginx/html
