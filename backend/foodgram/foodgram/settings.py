@@ -33,7 +33,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'backend',
     'localhost',
-    '51.250.9.96',
+    '84.252.131.145',
     'db',
     'proxy',
     'fronted']
