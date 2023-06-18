@@ -50,4 +50,4 @@ tzdata==2022.7
 uritemplate==4.1.1
 urllib3==1.26.15
 zope.interface==6.0
-Django==3.2.18
+
