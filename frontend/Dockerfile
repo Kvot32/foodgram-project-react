@@ -7,7 +7,7 @@ COPY . ./
 RUN npm run build
 RUN cp -r build /app/result_build
 
-FROM nginx:1.19.3
+RUN rm /docker-entrypoint.d/*
 COPY --from=build /app/result_build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
