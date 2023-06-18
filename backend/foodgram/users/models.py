@@ -19,13 +19,13 @@ class UserModel(AbstractUser):
         return f'{self.username}'
 class Follow (models.Model):
     user = models.ForeignKey (
-        'CustomUser',
+        'UserModel',
         on_delete=models.CASCADE,
         related_name='author',
         verbose_name='подписчик',
     )
     author = models.ForeignKey (
-        'CustomUser',
+        'UserModel',
         on_delete=models.CASCADE,
         related_name='follower',
         verbose_name='автор',
