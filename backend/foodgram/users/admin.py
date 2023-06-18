@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserModel, Follow
+from .models import CustomUser, Follow
 
 
 @admin.register(Follow)
@@ -7,7 +7,7 @@ class FollowAdmin(admin.ModelAdmin):
     list_display = ('user', 'author',)
 
 
-@admin.register(UserModel)
+@admin.register(CustomUser)
 class UserAdmin(admin.ModelAdmin):
-    model = UserModel
+    model = CustomUser
     list_display = ('username', 'email', 'last_name', 'password',)

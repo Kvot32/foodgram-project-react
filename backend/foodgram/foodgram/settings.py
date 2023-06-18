@@ -31,7 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-AUTH_USER_MODEL = 'users.UserModel'
+AUTH_USER_MODEL = 'users.z'
 
 # Application definition
 
