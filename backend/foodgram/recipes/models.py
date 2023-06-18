@@ -2,7 +2,7 @@ from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
 
-from users.models import CustomUser
+from users.models import UserModel
 
 class Tag (models.Model):
     name = models.CharField (max_length=80, verbose_name='Название', unique=True)
@@ -46,7 +46,7 @@ class Ingredient (models.Model):
 class Recipe (models.Model):
     name = models.CharField (max_length=200, verbose_name='Название')
     author = models.ForeignKey (
-        CustomUser, related_name='recipes', on_delete=models.CASCADE, verbose_name='автор'
+        UserModel, related_name='recipes', on_delete=models.CASCADE, verbose_name='автор'
     )
     image = models.ImageField (upload_to='image/', verbose_name='Фото рецепта')
     ingredients = models.ManyToManyField (Ingredient, through=AmountIngredient,
@@ -65,7 +65,7 @@ class Recipe (models.Model):
     def __str__ (self):
         return self.name
 class Favorite (models.Model):
-    user = models.ForeignKey (CustomUser, on_delete=models.CASCADE, related_name='favorites')
+    user = models.ForeignKey (UserModel, on_delete=models.CASCADE, related_name='favorites')
     recipe = models.ForeignKey (Recipe, on_delete=models.CASCADE, related_name='favorites')
     class Meta:
         verbose_name = 'Избранное'
@@ -77,7 +77,7 @@ class Favorite (models.Model):
             )
         ]
 class ShoppingList (models.Model):
-    user = models.ForeignKey (CustomUser, on_delete=models.CASCADE)
+    user = models.ForeignKey (UserModel, on_delete=models.CASCADE)
     recipe = models.ForeignKey (Recipe, on_delete=models.CASCADE)
     class Meta:
         verbose_name_plural = 'Шопинг лист'

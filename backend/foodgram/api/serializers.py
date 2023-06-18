@@ -3,7 +3,7 @@ from django.db import transaction
 from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 
-from users.models import Follow, CustomUser
+from users.models import Follow, UserModel
 from recipes.models import Recipe, Tag, Ingredient, AmountIngredient, Favorite, ShoppingList
 import base64
 
@@ -23,7 +23,7 @@ class CustomUserSerializer(UserCreateSerializer):
     id = serializers.ReadOnlyField()
 
     class Meta:
-        model = CustomUser
+        model = UserModel
         fields = ('email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed', 'password')
 
     def get_is_subscribed(self, obj):
