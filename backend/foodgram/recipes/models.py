@@ -2,7 +2,7 @@ from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
 
-from users.models import z
+from users.models import CustomUser
 
 class Tag (models.Model):
     name = models.CharField (max_length=80, verbose_name='Название', unique=True)
