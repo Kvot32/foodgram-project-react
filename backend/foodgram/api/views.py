@@ -12,7 +12,7 @@ from .paginator import LimitPageNumberPagination
 from .serializers import TagSerializer, IngredientSerializer, FavoriteSerializer, RecipeIngredientGetSerializer, \
     FollowSerializer, CustomUserSerializer, RecipesGetSerializer, RecipeCreatedSerializer
 from rest_framework import viewsets, status
-from recipes.models import Tag, Recipe, AmountIngredient, Ingredient, Favorite, ShoppingList
+from recipes.models import Favorite, TagsModel, RecipesModel, IngredientsModel, ShoppingCart, RecipeIngredient
 from users.models import Follow
 from rest_framework.decorators import action
 from djoser.views import UserViewSet
@@ -23,17 +23,17 @@ User = get_user_model()
 
 class TagViewSet(viewsets.ModelViewSet):
     permission_classes = (AdminUserOrReadOnly,)
-    queryset = Tag.objects.all()
+    queryset = TagsModel.objects.all()
     serializer_class = TagSerializer
 
 
 class IngredientViewSet(viewsets.ModelViewSet):
-    queryset = Ingredient.objects.all()
+    queryset = IngredientsModel.objects.all()
     serializer_class = IngredientSerializer
 
 
 class AmountIngredientViewSet(viewsets.ModelViewSet):
-    queryset = AmountIngredient.objects.all()
+    queryset = RecipeIngredient.objects.all()
     serializer_class = RecipeIngredientGetSerializer
 
 
@@ -90,7 +90,7 @@ class CustomUserViewSet(UserViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
+    queryset = RecipesModel.objects.all()
     permission_classes = [AllowAny, ]
     filter_backends = [DjangoFilterBackend, ]
     filterset_class = RecipeFilter
@@ -109,7 +109,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def favorite(self, request, pk=None):
         user = request.user
-        recipe = get_object_or_404(Recipe, pk=pk)
+        recipe = get_object_or_404(RecipesModel, pk=pk)
         favorited = Favorite.objects.filter(
             user=user, recipe=recipe)
         if request.method == 'POST':
@@ -140,8 +140,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def shopping_cart(self, request, pk=None):
         user = request.user
-        recipe = get_object_or_404(Recipe, pk=pk)
-        in_shopping = ShoppingList.objects.filter(
+        recipe = get_object_or_404(RecipesModel, pk=pk)
+        in_shopping = ShoppingCart.objects.filter(
             user=user, recipe=recipe)
         if request.method == 'POST':
             if in_shopping.exists():
@@ -149,7 +149,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     {'error': 'Вы уже добавили рецепт в список покупок.'},
                     status=status.HTTP_400_BAD_REQUEST
                 )
-            ShoppingList.objects.create(user=user, recipe=recipe)
+            ShoppingCart.objects.create(user=user, recipe=recipe)
             serializers = FavoriteSerializer(
                 recipe, context={'request': request})
             return Response(serializers.data, status=status.HTTP_201_CREATED)
@@ -172,7 +172,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     )
     def get_shopping_card(self, request):
         user = get_object_or_404(User, pk=request.user.pk)
-        ingredients = AmountIngredient.objects.filter(
+        ingredients = RecipeIngredient.objects.filter(
             recipe__shopping_list__user=user).values(
             'ingredients__name',
             'ingredients__measurement_unit').order_by(

@@ -1,20 +1,20 @@
 from django.contrib import admin
-from .models import Tag, Recipe, AmountIngredient, Ingredient, Favorite, ShoppingList
+from .models import  Favorite, TagsModel, RecipesModel, IngredientsModel, ShoppingCart, RecipeIngredient
 
 
-admin.site.register(Tag)
+admin.site.register(TagsModel)
 
 
 class RecipeIngredientAdmin(admin.TabularInline):
-    model = Recipe.ingredients.through
+    model = RecipesModel.ingredients.through
     extra = 1
 
 
 class RecipeTagAdmin(admin.TabularInline):
-    model = Recipe.tags.through
+    model = RecipesModel.tags.through
     extra = 1
 
-@admin.register(Recipe)
+@admin.register(RecipesModel)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('name', 'author','image',
                     'text', 'cooking_time',)
@@ -28,13 +28,13 @@ class RecipeAdmin(admin.ModelAdmin):
         return obj.in_favorite.count()
 
 
-@admin.register(AmountIngredient)
+@admin.register(RecipeIngredient)
 class AmountIngredientAdmin(admin.ModelAdmin):
     list_display = ('amount','ingredient',)
 
 
 
-@admin.register(Ingredient)
+@admin.register(IngredientsModel)
 class IngredientAdmin(admin.ModelAdmin):
     list_display = ('name', 'measurement_unit')
 
@@ -43,7 +43,7 @@ class IngredientAdmin(admin.ModelAdmin):
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe')
 
-@admin.register(ShoppingList)
+@admin.register(ShoppingCart)
 class ShoppingListAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe')
 
