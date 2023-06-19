@@ -1,16 +1,16 @@
-version: '3.3'
+version: '3.8'
+
 services:
+
   db:
-    container_name: db
-    image: postgres:14-alpine
+    image: postgres:13.0-alpine
     volumes:
-      - database:/var/lib/postgesql/data
+      - db_data:/var/lib/postgresql/data/
     env_file:
       - ./.env
 
   backend:
-    container_name: backend
-    image: kvot32/foodgram_backend:latest
+    image: kvot32/foodgram_back:latest
     restart: always
     volumes:
       - static_value:/app/static/
@@ -21,29 +21,26 @@ services:
       - ./.env
 
   frontend:
-    container_name: frontend
-    image: kvot32/foodgram_frontend:latest
+    image: kvot32/foodgram_front:latest
     volumes:
-      - ./frontend/:/app/result_build/
+      - ../frontend/:/app/result_build/
     depends_on:
       - backend
 
   nginx:
-    container_name: proxy
-    image: nginx:1.19.3
+    image: nginx:1.19.3-alpine
     ports:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./frontend/build:/usr/share/nginx/html/
+      - ../frontend/build:/usr/share/nginx/html/
+      - ../docs/:/usr/share/nginx/html/api/docs/
       - static_value:/var/html/static/
       - media_value:/var/html/media/
-
     depends_on:
-      - backend
       - frontend
 
 volumes:
-  database:
   static_value:
   media_value:
+  db_data:

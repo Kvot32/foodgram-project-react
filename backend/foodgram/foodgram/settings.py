@@ -11,27 +11,25 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
-from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-PROJECT_BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-load_dotenv(f'{PROJECT_BASE_DIR}/infra/.env')
+SECRET_KEY = os.getenv('SECRET_KEY', default='django-insecure-@h9m$xw&@-o9*-9+ly=uy8s*u4$coscqxa_75#=xp@y!ncy6df')
+
+DEBUG = (os.getenv('DEBUG', 'False') == 'True')
+
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@h9m$xw&@-o9*-9+ly=uy8s*u4$coscqxa_75#=xp@y!ncy6df'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-
-AUTH_USER_MODEL = 'users.CustomUser'
+AUTH_USER_MODEL = 'users.User'
 
 # Application definition
 
@@ -42,13 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'foodgram',
-    'recipes',
-    'users',
-    'api',
     'rest_framework',
     'rest_framework.authtoken',
-    'djoser'
+    'django_filters',
+    'djoser',
+    'recipes.apps.RecipesConfig',
+    'users.apps.UsersConfig',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
@@ -87,12 +85,13 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT')
+        'ENGINE': os.getenv(
+            'DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': os.getenv('DB_NAME', default='postgres'),
+        'USER': os.getenv('POSTGRES_USER', default='postgres'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+        'HOST': os.getenv('DB_HOST', default='db'),
+        'PORT': os.getenv('DB_PORT', default='5432'),
     }
 }
 
@@ -147,30 +146,27 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-    'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend',
-    ],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'api.pagination.CustomPagination',
     'PAGE_SIZE': 6,
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
 }
 DJOSER = {
-    'LOGIN_FIELD': 'email',
-    'HIDE_USERS': False,
     'SERIALIZERS': {
-        'user_create': 'api.serializers.CustomUserSerializer',
-        'user': 'api.serializers.CustomUserSerializer',
-        'current_user': 'api.serializers.CustomUserSerializer',
+        'current_user': 'api.serializers.MyUserSerializer',
+        'user': 'api.serializers.MyUserSerializer',
     },
     'PERMISSIONS': {
-        'user': ('rest_framework.permissions.AllowAny',),
-        'user_list': ('rest_framework.permissions.AllowAny',)
-    }
+        'set_username': ['rest_framework.permissions.IsAdminUser'],
+        'user': ['rest_framework.permissions.AllowAny'],
+        'user_list': ['rest_framework.permissions.AllowAny'],
+        'user_delete': ['rest_framework.permissions.IsAdminUser'],
+    },
+    'HIDE_USERS': False,
 }
 
 

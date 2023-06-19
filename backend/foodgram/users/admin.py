@@ -1,13 +1,21 @@
 from django.contrib import admin
-from .models import CustomUser, Follow
+
+from users.models import Follow, User
+
+
+EMPTY_VALUE = '-пусто-'
 
 
 @admin.register(Follow)
-class FollowAdmin(admin.ModelAdmin):
-    list_display = ('user', 'author',)
+class FolowAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'user', 'author')
+    search_fields = ('user', 'author')
 
 
-@admin.register(CustomUser)
-class UserAdmin(admin.ModelAdmin):
-    model = CustomUser
-    list_display = ('username', 'email', 'last_name', 'password',)
+@admin.register(User)
+class UsersAdmin(admin.ModelAdmin):
+    list_display = ('username', 'email', 'first_name',
+                    'last_name', 'password',)
+    search_fields = ('username', 'email',)
+    list_filter = ('username', 'email',)
+    empty_value = EMPTY_VALUE
