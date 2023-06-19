@@ -1,7 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import UniqueConstraint
-
 from users.models import User
 
 
@@ -49,7 +48,7 @@ class Recipe(models.Model):
     author = models.ForeignKey(User,
                                verbose_name='Автор',
                                on_delete=models.CASCADE,
-                               related_name='recipes',)
+                               related_name='recipes', )
     name = models.CharField(verbose_name='Название',
                             max_length=200)
     image = models.ImageField(verbose_name='Фото',

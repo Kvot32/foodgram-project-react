@@ -15,8 +15,9 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-SECRET_KEY = os.getenv('SECRET_KEY', default='django-insecure-@h9m$xw&@-o9*-9+ly=uy8s*u4$coscqxa_75#=xp@y!ncy6df')
+SECRET_KEY = os.getenv(
+    'SECRET_KEY', default='django-insecure-@h9m$xw&@-o9*-9+ly=uy8s*u4$coscqxa_75#=xp@y!ncy6df'
+)
 
 DEBUG = (os.getenv('DEBUG', 'False') == 'True')
 
@@ -79,7 +80,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -94,7 +94,6 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', default='5432'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -114,7 +113,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -128,7 +126,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
@@ -138,7 +135,6 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
@@ -168,5 +164,3 @@ DJOSER = {
     },
     'HIDE_USERS': False,
 }
-
-
