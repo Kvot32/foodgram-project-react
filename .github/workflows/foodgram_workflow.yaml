@@ -60,6 +60,9 @@ jobs:
           script: |
             cd foodgram-project-react
             cd infra
+            ls
+            sudo ls
+            pwd
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_back:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_front:latest
             sudo touch .env
